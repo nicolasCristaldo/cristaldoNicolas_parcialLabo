@@ -12,6 +12,17 @@
 #include "utn.h"
 #include <string.h>
 
+int censistaGetLegajo(eCensista* censista, int* legajo)
+{
+	int ret = -1;
+
+	if(censista != NULL && legajo != NULL)
+	{
+		*legajo = censista->legajo;
+	}
+	return ret;
+}
+
 int inicializarCensista(eCensista* censistas, int tam)
 {
 	int ret = -1;
@@ -21,7 +32,7 @@ int inicializarCensista(eCensista* censistas, int tam)
 	{
 		for(i=0;i<tam;i++)
 		{
-			(censistas+i)->isEmpty = 1;
+			(*(censistas+i)).isEmpty = 1;
 		}
 		ret = 0;
 	}
@@ -38,7 +49,7 @@ int buscarIdCensista(eCensista* censistas, int tam, int id)
 	{
 		for(i=0; i<tam; i++)
 		{
-			if((censistas+i)->legajo == id)
+			if((*(censistas+i)).legajo == id)
 			{
 				ret = i;
 			}
@@ -58,7 +69,7 @@ int listarCensistas(eCensista* censistas, int tam)
 		printf(" %-20s %-15s %-10s %-10s\n","NOMBRE","TELEFONO","EDAD","LEGAJO");
 		for(i = 0; i < tam; i++)
 		{
-			if((censistas+i)->isEmpty == 0)
+			if((*(censistas+i)).isEmpty == 0)
 			{
 				mostrarCensista(*(censistas+i));
 			}
@@ -143,11 +154,11 @@ int agregarCensista(eCensista* censistas, int tam, char* telefono, char* nombre,
 		pos = buscarCensistaLibre(censistas, tam);
 		if(pos != -1)
 		{
-			(censistas+pos)->isEmpty = 0;
-			(censistas+pos)->legajo = *id;
-			strncpy((censistas+pos)->nombre,nombre,sizeof((censistas+pos)->nombre));
-			strncpy((censistas+pos)->telefono,telefono,sizeof((censistas+pos)->telefono));
-			(censistas+pos)->edad = edad;
+			(*(censistas+pos)).isEmpty = 0;
+			(*(censistas+pos)).legajo = *id;
+			strncpy((*(censistas+pos)).nombre,nombre,sizeof((*(censistas+pos)).nombre));
+			strncpy((*(censistas+pos)).telefono,telefono,sizeof((*(censistas+pos)).telefono));
+			(*(censistas+pos)).edad = edad;
 			*posCargadas = *posCargadas +1;
 		}
 		ret = 0;
@@ -165,7 +176,7 @@ int buscarCensistaLibre(eCensista* censistas, int tam)
 	{
 		for(i = 0; i < tam; i++)
 		{
-			if((censistas+i)->isEmpty == 1)
+			if((*(censistas+i)).isEmpty == 1)
 			{
 				ret = i;
 				break;
@@ -190,7 +201,7 @@ int bajaCensista(eCensista* censistas, int tam, int* posCargadas, int idActual)
 			{
 				if(utn_confirmar("\n¿Está seguro? s/n\n", "\nRespuesta no valida.\n", 3) == 1)
 				{
-					(censistas+pos)->isEmpty = 1;
+					(*(censistas+pos)).isEmpty = 1;
 					ret = 0;
 					*posCargadas = *posCargadas -1;
 				}
@@ -227,21 +238,21 @@ int modificarCensista(eCensista* censistas, int tam, int idActual)
 					case 1:
 						if(pedirNombre(nombre, "\nIngrese el nombre: ") == 0)
 						{
-							strncpy((censistas+pos)->nombre,nombre,sizeof((censistas+pos)->nombre));
+							strncpy((*(censistas+pos)).nombre,nombre,sizeof((*(censistas+pos)).nombre));
 							printf("\nSe guardaron los cambios.\n");
 						}
 						break;
 					case 2:
 						if(pedirTelefono(nombre) == 0)
 						{
-							strncpy((censistas+pos)->telefono,nombre,sizeof((censistas+pos)->telefono));
+							strncpy((*(censistas+pos)).telefono,nombre,sizeof((*(censistas+pos)).telefono));
 							printf("\nSe guardaron los cambios.\n");
 						}
 						break;
 					case 3:
 						if(pedirNumero(&numero, "\nIngrese la edad: ",  "\nError.\n",18,64) == 0)
 						{
-							(censistas+pos)->edad = numero;
+							(*(censistas+pos)).edad = numero;
 							printf("\nSe guardaron los cambios.\n");
 						}
 						break;

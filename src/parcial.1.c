@@ -6,10 +6,12 @@
 #include "censista.h"
 #include "vivienda.h"
 #include "utn.h"
+#include "catastro.h"
 
-#define TAM_V 3
+#define TAM_V 5
 #define TAM_C 3
 #define TAM_T 4
+#define TAM_CAT 5
 
 int main(void) {
 	setbuf(stdout, NULL);
@@ -21,13 +23,17 @@ int main(void) {
 							{101, "Juan", 24, "4301-54678",0},
 							{102, "Sol", 47, "5902-37487",0}};
 	eTipoVivienda tipos[TAM_T] = {{1,"Casa"},{2,"Departamento"},{3,"Casilla"},{4,"Rancho"}};
+	eCatastro catastros[TAM_CAT] = {{1000, "Avellaneda", 28, 1540}, {1001, "Lanus", 43, 1789}, {1002, "Quilmes", 32, 1624},
+									{1003, "La Plata", 67, 1677},{1004, "Lomas de Zamora", 32, 1923}};
 	eVivienda viviendas[TAM_V];
 
 	inicializarVivienda(viviendas, TAM_V);
+
+	int (*pFuncion)(eVivienda, int);
 	do
 	{
 		res = utn_getNombre(&letraSeleccionada, "Elija una opcion: \nA - ALTA.\nB - MODIFICAR.\nC - BAJA.\nD - LISTAR VIVIENDAS."
-				"\nE - LISTAR CENSISTAS.\nF - SENSISTAS POR VIVIENDA\nG - CENSISTA CON MAS VIVIENDAS", "\nCaracter invalido\n", 1, 1, 3);
+				"\nE - LISTAR CENSISTAS.\nF - LISTAR CATASTROS POR NOMBRE.\nG - INFORMAR.\n", "\nCaracter invalido\n", 1, 1, 3);
 		if(!res)
 		{
 			switch(letraSeleccionada)
@@ -36,7 +42,7 @@ int main(void) {
 				case 'A':
 					if(posCargadas < TAM_V)
 					{
-						if(!cargarVivienda(viviendas, censistas, TAM_V, TAM_C, &idActual))
+						if(!cargarVivienda(viviendas, censistas, catastros, TAM_V, TAM_C, TAM_CAT, &idActual))
 						{
 							posCargadas++;
 						}
@@ -75,7 +81,8 @@ int main(void) {
 				case 'D':
 					if(posCargadas > 0)
 					{
-						listarVivienda(viviendas, TAM_V, censistas, TAM_C, tipos, TAM_T);
+						pFuncion = validarEmpty;
+						listarViviendas(viviendas, TAM_V, censistas, TAM_C, catastros, TAM_CAT, tipos, TAM_T, pFuncion, 0);
 					}
 					else
 					{
@@ -88,16 +95,14 @@ int main(void) {
 					break;
 				case 'f':
 				case 'F':
-					if(posCargadas > 0)
-					{
-						mostrarCensistaPorViviendas(censistas, viviendas, tipos, TAM_V, TAM_C, TAM_T);
-					}
+					ordenarCatastros(catastros, TAM_CAT);
+					listarCatastros(catastros, TAM_CAT);
 					break;
 				case 'g':
 				case 'G':
 					if(posCargadas > 0)
 					{
-						censisitasConMasCensos(censistas, viviendas, TAM_V);
+						informar(viviendas, TAM_V, censistas, TAM_C, catastros, TAM_CAT, tipos, TAM_T);
 					}
 					break;
 			}

@@ -9,6 +9,7 @@
 #define VIVIENDA_H_
 
 #include "censista.h"
+#include "catastro.h"
 
 typedef struct
 {
@@ -18,6 +19,7 @@ typedef struct
 	int cantHabitaciones;
 	int tipoVivienda;
 	int legajoCensista;
+	int idCatastro;
 	int isEmpty;
 }eVivienda;
 
@@ -45,7 +47,7 @@ int inicializarVivienda(eVivienda* viviendas, int tam);
  * @param idActual puntero a int, id actual de la vivienda
  * @return retorna -1 en caso de error, 0 si todo sale bien
  */
-int cargarVivienda(eVivienda* viviendas, eCensista* censistas, int tamViv, int tamCen, int* idActual);
+int cargarVivienda(eVivienda* viviendas, eCensista* censistas, eCatastro* catastros, int tamViv, int tamCen, int tamCat, int* idActual);
 /**
  * agrega una vivienda cargada a un array de viviendas
  * @param viviendas puntero a array de viviendas
@@ -58,7 +60,7 @@ int cargarVivienda(eVivienda* viviendas, eCensista* censistas, int tamViv, int t
  * @param idActual puntero a int, id actual de las viviendas
  * @return retorna -1 en caso de error, 0 si todo salio bien
  */
-int agregarVivienda(eVivienda* viviendas,char* calle,int personas,int habitaciones,int idCensista, int tipo,int tam,int* idActual);
+int agregarVivienda(eVivienda* viviendas,char* calle,int personas,int habitaciones,int idCensista, int idCatastro, int tipo,int tam,int* idActual);
 /**
  * busca un espacio libre en un array de viviendas
  * @param viviendas puntero a array de viviendas
@@ -121,18 +123,7 @@ int darDeBaja(eVivienda* viviendas, int tam, int idActual);
  * @param tipo puntero a array de caracteres, tipo de vivienda
  * @param censista puntero a array de caracteres, nombre del censista
  */
-void mostrarVivienda(eVivienda vivienda, char* tipo, char* censista);
-/**
- * lista todas las viviendascargadas
- * @param viviendas puntero a array de viviendas
- * @param tamViv tamaño del array de viviendas
- * @param censistas puntero a array de censistas
- * @param tamCen tamaño del array de censistas
- * @param tipos puntero a array de tipos de casas
- * @param tamTip tamaño del array de tipos
- * @return retorna 0 si todo salio bien, -1 en caso de error
- */
-int listarVivienda(eVivienda* viviendas, int tamViv, eCensista* censistas, int tamCen, eTipoVivienda* tipos, int tamTip);
+void mostrarVivienda(eVivienda vivienda, char* tipo, char* censista, eCatastro catastro);
 /**
  * ordena un array de viviendas por nombre de calle y ante la igualdad, por cantidad de personas
  * @param viviendas puntero a array de viviendas
@@ -149,6 +140,97 @@ int ordenarViviendas(eVivienda* viviendas, int tam);
  */
 int buscarIdTipo(eTipoVivienda* tipos, int tam, int id);
 
-int mostrarCensistaPorViviendas(eCensista* censistas, eVivienda* viviendas,eTipoVivienda* tipos, int tamV, int tamC, int tamT);
+/**
+ *pide al usuario el id del catastro y valida que exista
+ * @param id id del catastro
+ * @param catastros array de catastros
+ * @param tam tamaño del array
+ * @return retorna -1 si hubo error, 0 si todo ok
+ */
+int pedirCatatastro(int* id, eCatastro* catastros, int tam);
+/**
+ *pide al usuario una opcion e informa lo seleccionado
+ * @param viviendas array de viviendas
+ * @param tamViv tamaño del array de viviendas
+ * @param censistas array de censistas
+ * @param tamCen tamaño del array de censistas
+ * @param catastros array de catastros
+ * @param tamCat tamaño del array de catastros
+ * @param tipos array de tipos de viviendas
+ * @param tamTip tamaño del array de tipos
+ * @return retorna -1 si hubo un error, 0 si todo ok
+ */
+int informar(eVivienda* viviendas, int tamViv, eCensista* censistas, int tamCen, eCatastro* catastros, int tamCat, eTipoVivienda* tipos, int tamTip);
+/**
+ * recorre un array de viviendas e informa la cantidad de viviendas que hay del tipo seleccionado
+ * @param viviendas array de viviendas
+ * @param tamViv tamaño del array de viviendas
+ * @param idTipo id del tipo de vivienda a contar
+ * @return retorna -1 si hubo error, >= 0 si todo ok
+ */
+int cantidadCensadaPorTipo(eVivienda* viviendas, int tamViv, int idTipo);
+/**
+ * informa la cantidad de viviendas censadas de cierto tipo y localidad seleccionados
+ * @param viviendas array de viviendas
+ * @param catastros array de catastros
+ * @param tamViv tamaño del array de viviendas
+ * @param tamCat tamaño del array de catastros
+ * @param idTipo id del tipo de vivienda a contar
+ * @param localidad id de la localidad
+ * @return retorna -1 si hubo un error, >= 0 si todo ok
+ */
+int cantidadCensadaPorTipoYLocalidad(eVivienda* viviendas, eCatastro* catastros, int tamViv, int tamCat, int idTipo, int localidad);
+/**
+ *recorre un array de viviendas e informa la cantidad de viviendas que hay de la localidad seleccionada
+ * @param viviendas array de viviendas
+ * @param catastros array de catastros
+ * @param tamViv tamaño del array de viviendas
+ * @param tamCat tamaño del array de catastros
+ * @param localidad id de la localidad
+ * @return retorna -1 si hubo un error, >= 0 si todo ok
+ */
+int cantidadCensadaPorLocalidad(eVivienda* viviendas, eCatastro* catastros, int tamViv, int tamCat, int localidad);
 
-int censisitasConMasCensos(eCensista* censistas, eVivienda* viviendas, int tamV);
+/**
+ * recibe un puntero a funcion y lista todas las viviendas
+ * @param viviendas array de viviendas
+ * @param tamViv tamaño del array de viviendas
+ * @param censistas array de censistas
+ * @param tamCen tamaño del array de censistas
+ * @param catastros array de catastros
+ * @param tamCat tamaño del array de catastros
+ * @param tipos array de tipos de viviendas
+ * @param tamTip tamaño del array de tipos
+ * @param pFunc puntero a funcion
+ * @param num numero a dar como parametro de la funcion
+ * @return retorna -1 si hubo un error, 0 si todo ok
+ */
+int listarViviendas(eVivienda* viviendas, int tamViv, eCensista* censistas, int tamCen, eCatastro* catastros, int tamCat, eTipoVivienda* tipos, int tamTip, int (*pFunc)(eVivienda,int),int num);
+/**
+ * valida que una vivienda sea del tipo dado como parametro
+ * @param vivienda vivienda a validar
+ * @param tipo id del tipo de vivienda a validar
+ * @return retorna 1 si la validacion fue correcta, 0 si no lo fue
+ */
+int validarTipo(eVivienda vivienda, int tipo);
+/**
+ * valida el campo legajoCensista de una vivienda dado como parametro
+ * @param vivienda vivienda a validar
+ * @param id id del censista a validar
+ * @return retorna 1 si la validacion fue correcta, 0 si no lo fue
+ */
+int validarCensista(eVivienda vivienda, int id);
+/**
+ *valida el campo idcatastro de una vivienda dado como parametro
+ * @param vivienda vivienda a validar
+ * @param id id del catastro a validar
+ * @return retorna 1 si la validacion fue correcta, 0 si no lo fue
+ */
+int validarLocalidad(eVivienda vivienda, int id);
+/**
+ *valida el campo isempty de una vivienda dado como parametro
+ * @param vivienda vivienda a validar
+ * @param empty valor del campo isEmpty a validar
+ * @return retorna 1 si la validacion fue correcta, 0 si no lo fue
+ */
+int validarEmpty(eVivienda vivienda, int empty);
